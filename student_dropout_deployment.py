@@ -12,7 +12,7 @@ import pandas as pd
 import joblib
 
 # Load trained model
-model = joblib.load("student_dropout_prediction.pkl")
+model = joblib.load("student_dropout_model.pkl")
 
 st.title("Student Dropout Prediction System")
 
