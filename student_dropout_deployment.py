@@ -11,19 +11,18 @@ import streamlit as st
 import pandas as pd
 import joblib
 
-# Load trained model
+# Load model
 model = joblib.load("student_dropout_model.pkl")
 
 st.title("Student Dropout Prediction System")
+st.subheader("Enter Student Details")
 
-st.header("Enter Student Details")
-
-age = st.number_input("Age")
+age = st.number_input("Age", min_value=15, max_value=40)
 gender = st.selectbox("Gender", ["Male", "Female"])
 family_income = st.number_input("Family Income")
 internet_access = st.selectbox("Internet Access", ["Yes", "No"])
-study_hours = st.number_input("Study Hours per Day")
-attendance = st.number_input("Attendance Rate (%)")
+study_hours = st.number_input("Study Hours per Day", min_value=0.0, max_value=12.0)
+attendance = st.number_input("Attendance Rate (%)", min_value=0.0, max_value=100.0)
 assignment_delay = st.number_input("Assignment Delay Days")
 travel_time = st.number_input("Travel Time (Minutes)")
 part_time_job = st.selectbox("Part Time Job", ["Yes", "No"])
@@ -32,11 +31,19 @@ stress_index = st.number_input("Stress Index")
 gpa = st.number_input("GPA")
 semester_gpa = st.number_input("Semester GPA")
 cgpa = st.number_input("CGPA")
-semester = st.number_input("Semester")
-department = st.selectbox("Department", ["CS", "IT", "Mechanical", "Civil", "Electrical"])
-parental_education = st.selectbox("Parental Education", ["School", "Graduate", "Postgraduate"])
+semester = st.number_input("Semester", min_value=1, max_value=8)
 
-# Encoding categorical values
+department = st.selectbox(
+    "Department",
+    ["CS", "IT", "Mechanical", "Civil", "Electrical"]
+)
+
+parental_education = st.selectbox(
+    "Parental Education",
+    ["School", "Graduate", "Postgraduate"]
+)
+
+# Encode categorical variables
 gender = 1 if gender == "Male" else 0
 internet_access = 1 if internet_access == "Yes" else 0
 part_time_job = 1 if part_time_job == "Yes" else 0
@@ -49,7 +56,7 @@ parent_dict = {"School":0, "Graduate":1, "Postgraduate":2}
 parental_education = parent_dict[parental_education]
 
 # Create dataframe
-df = pd.DataFrame({
+data = pd.DataFrame({
     "Age":[age],
     "Gender":[gender],
     "Family_Income":[family_income],
@@ -70,10 +77,10 @@ df = pd.DataFrame({
 })
 
 # Prediction
-if st.button("Predict Dropout"):
-    prediction = model.predict(df)
+if st.button("Predict Dropout Risk"):
+    prediction = model.predict(data)
 
     if prediction[0] == 1:
-        st.error("Student is likely to Dropout")
+        st.error("High Risk: Student may Dropout")
     else:
-        st.success("Student is likely to Continue Studies")
+        st.success("Low Risk: Student likely to Continue Studies")
