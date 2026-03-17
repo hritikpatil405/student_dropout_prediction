@@ -11,52 +11,30 @@ import streamlit as st
 import pandas as pd
 import joblib
 
-# Load model
-model = joblib.load("student_dropout_model.pkl")
+model = joblib.load('student_dropout_model.pkl')
+encoder = joblib.load('label_encoder_dropout.pkl')
 
-st.title("Student Dropout Prediction System")
-st.subheader("Enter Student Details")
+st.title('Student Dropout Prediction System')
 
-age = st.number_input("Age", min_value=15, max_value=40)
-gender = st.selectbox("Gender", ["Male", "Female"])
-family_income = st.number_input("Family Income")
-internet_access = st.selectbox("Internet Access", ["Yes", "No"])
-study_hours = st.number_input("Study Hours per Day", min_value=0.0, max_value=12.0)
-attendance = st.number_input("Attendance Rate (%)", min_value=0.0, max_value=100.0)
-assignment_delay = st.number_input("Assignment Delay Days")
-travel_time = st.number_input("Travel Time (Minutes)")
-part_time_job = st.selectbox("Part Time Job", ["Yes", "No"])
-scholarship = st.selectbox("Scholarship", ["Yes", "No"])
-stress_index = st.number_input("Stress Index")
-gpa = st.number_input("GPA")
-semester_gpa = st.number_input("Semester GPA")
-cgpa = st.number_input("CGPA")
-semester = st.number_input("Semester", min_value=1, max_value=8)
+age = st.number_input("Enter student age", 15, 40)
+gender = st.selectbox("Select gender", encoder["Gender"].classes_)
+family_income = st.number_input("Enter family income", 0, 1000000)
+internet_access = st.selectbox("Internet access", encoder["Internet_Access"].classes_)
+study_hours = st.number_input("Study hours per day", 0, 12)
+attendance = st.number_input("Attendance rate (%)", 0, 100)
+assignment_delay = st.number_input("Assignment delay days", 0, 30)
+travel_time = st.number_input("Travel time (minutes)", 0, 180)
+part_time_job = st.selectbox("Part time job", encoder["Part_Time_Job"].classes_)
+scholarship = st.selectbox("Scholarship", encoder["Scholarship"].classes_)
+stress_index = st.number_input("Stress index", 0, 100)
+gpa = st.number_input("GPA", 0.0, 10.0)
+semester_gpa = st.number_input("Semester GPA", 0.0, 10.0)
+cgpa = st.number_input("CGPA", 0.0, 10.0)
+semester = st.number_input("Semester", 1, 8)
+department = st.selectbox("Department", encoder["Department"].classes_)
+parental_education = st.selectbox("Parental education", encoder["Parental_Education"].classes_)
 
-department = st.selectbox(
-    "Department",
-    ["CS", "IT", "Mechanical", "Civil", "Electrical"]
-)
-
-parental_education = st.selectbox(
-    "Parental Education",
-    ["School", "Graduate", "Postgraduate"]
-)
-
-# Encode categorical variables
-gender = 1 if gender == "Male" else 0
-internet_access = 1 if internet_access == "Yes" else 0
-part_time_job = 1 if part_time_job == "Yes" else 0
-scholarship = 1 if scholarship == "Yes" else 0
-
-dept_dict = {"CS":0, "IT":1, "Mechanical":2, "Civil":3, "Electrical":4}
-department = dept_dict[department]
-
-parent_dict = {"School":0, "Graduate":1, "Postgraduate":2}
-parental_education = parent_dict[parental_education]
-
-# Create dataframe
-data = pd.DataFrame({
+df = pd.DataFrame({
     "Age":[age],
     "Gender":[gender],
     "Family_Income":[family_income],
@@ -76,11 +54,14 @@ data = pd.DataFrame({
     "Parental_Education":[parental_education]
 })
 
-# Prediction
-if st.button("Predict Dropout Risk"):
-    prediction = model.predict(data)
+if st.button("Predict Dropout"):
+    
+    for col in encoder:
+        df[col] = encoder[col].transform(df[col])
+
+    prediction = model.predict(df)
 
     if prediction[0] == 1:
-        st.error("High Risk: Student may Dropout")
+        st.error("Student is likely to Dropout")
     else:
-        st.success("Low Risk: Student likely to Continue Studies")
+        st.success("Student is likely to Continue Studies")
