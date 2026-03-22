@@ -30,37 +30,23 @@ gpa = st.number_input("GPA")
 semester_gpa = st.number_input("Semester GPA")
 cgpa = st.number_input("CGPA")
 semester = st.number_input("Semester")
-department = st.selectbox("Department", ["CS", "IT", "Mechanical", "Civil", "Electrical"])
-parental_education = st.selectbox("Parental Education", ["School", "Graduate", "Postgraduate"])
+department = st.number_input("Department")
+parental_education = st.number_input("Parental Education")
 
 gender = 1 if gender == "Male" else 0
 internet_access = 1 if internet_access == "Yes" else 0
 part_time_job = 1 if part_time_job == "Yes" else 0
 scholarship = 1 if scholarship == "Yes" else 0
 
-dept_dict = {"CS":0,"IT":1,"Mechanical":2,"Civil":3,"Electrical":4}
-department = dept_dict[department]
-
-parent_dict = {"School":0,"Graduate":1,"Postgraduate":2}
-parental_education = parent_dict[parental_education]
-
-columns = [
-"Age","Gender","Family_Income","Internet_Access",
-"Study_Hours_per_Day","Attendance_Rate","Assignment_Delay_Days",
-"Travel_Time_Minutes","Part_Time_Job","Scholarship",
-"Stress_Index","GPA","Semester_GPA","CGPA",
-"Semester","Department","Parental_Education"
-]
-
 data = [[
-age,gender,family_income,internet_access,
-study_hours,attendance_rate,assignment_delay,
-travel_time,part_time_job,scholarship,
-stress_index,gpa,semester_gpa,cgpa,
-semester,department,parental_education
+age, gender, family_income, internet_access,
+study_hours, attendance_rate, assignment_delay,
+travel_time, part_time_job, scholarship,
+stress_index, gpa, semester_gpa, cgpa,
+semester, department, parental_education
 ]]
 
-df = pd.DataFrame(data, columns=columns)
+df = pd.DataFrame(data)
 
 if st.button("Predict Dropout"):
     prediction = model.predict(df)
