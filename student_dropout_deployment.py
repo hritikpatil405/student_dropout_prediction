@@ -17,7 +17,7 @@ st.title("Student Dropout Prediction")
 
 st.write("Enter student details to predict dropout risk")
 
-age = st.number_input("Age")
+age = st.number_input("Age", 0, 100)
 gender = st.number_input("Gender (0 = Female, 1 = Male)", 0, 1)
 family_income = st.number_input("Family Income")
 internet_access = st.number_input("Internet Access (0 = No, 1 = Yes)", 0, 1)
@@ -35,17 +35,31 @@ semester = st.number_input("Semester")
 department = st.number_input("Department (Encoded)")
 parental_education = st.number_input("Parental Education (Encoded)")
 
-df = pd.DataFrame([[ 
-age, gender, family_income, internet_access,
-study_hours, attendance_rate, assignment_delay,
-travel_time, part_time_job, scholarship,
-stress_index, gpa, semester_gpa, cgpa,
-semester, department, parental_education
-]])
+data = [[
+    age,
+    gender,
+    family_income,
+    internet_access,
+    study_hours,
+    attendance_rate,
+    assignment_delay,
+    travel_time,
+    part_time_job,
+    scholarship,
+    stress_index,
+    gpa,
+    semester_gpa,
+    cgpa,
+    semester,
+    department,
+    parental_education
+]]
+
+df = pd.DataFrame(data)
 
 if st.button("Predict Dropout"):
     prediction = model.predict(df)
-    
+
     if prediction[0] == 1:
         st.error("Student is likely to Dropout")
     else:
