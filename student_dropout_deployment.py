@@ -10,6 +10,7 @@ Original file is located at
 import streamlit as st
 import pandas as pd
 import joblib
+import numpy as np
 
 model = joblib.load("student_dropout_model.pkl")
 
@@ -38,27 +39,7 @@ internet_access = 1 if internet_access == "Yes" else 0
 part_time_job = 1 if part_time_job == "Yes" else 0
 scholarship = 1 if scholarship == "Yes" else 0
 
-columns = [
-"Age",
-"Gender",
-"Family_Income",
-"Internet_Access",
-"Study_Hours_per_Day",
-"Attendance_Rate",
-"Assignment_Delay_Days",
-"Travel_Time_Minutes",
-"Part_Time_Job",
-"Scholarship",
-"Stress_Index",
-"GPA",
-"Semester_GPA",
-"CGPA",
-"Semester",
-"Department",
-"Parental_Education"
-]
-
-data = [[
+data = np.array([[
 age,
 gender,
 family_income,
@@ -76,12 +57,10 @@ cgpa,
 semester,
 department,
 parental_education
-]]
-
-df = pd.DataFrame(data, columns=columns)
+]])
 
 if st.button("Predict Dropout"):
-    prediction = model.predict(df)
+    prediction = model.predict(data)
 
     if prediction[0] == 1:
         st.error("Student is likely to Dropout")
