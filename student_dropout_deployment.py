@@ -11,9 +11,10 @@ import streamlit as st
 import pandas as pd
 import joblib
 
+# Load model
 model = joblib.load("student_dropout_model.pkl")
 
-st.title("Student Dropout Prediction")
+st.title("Student Dropout Prediction System")
 
 st.write("Enter student details to predict dropout risk")
 
@@ -35,7 +36,8 @@ semester = st.number_input("Semester")
 department = st.number_input("Department (Encoded)")
 parental_education = st.number_input("Parental Education (Encoded)")
 
-data = [[
+# Collect inputs
+input_data = [
     age,
     gender,
     family_income,
@@ -53,10 +55,15 @@ data = [[
     semester,
     department,
     parental_education
-]]
+]
 
-df = pd.DataFrame(data)
+# Create dataframe using model feature names
+try:
+    df = pd.DataFrame([input_data], columns=model.feature_names_in_)
+except:
+    df = pd.DataFrame([input_data])
 
+# Prediction
 if st.button("Predict Dropout"):
     prediction = model.predict(df)
 
