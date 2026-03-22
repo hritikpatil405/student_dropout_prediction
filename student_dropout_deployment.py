@@ -10,53 +10,57 @@ Original file is located at
 import streamlit as st
 import pandas as pd
 import joblib
+import numpy as np
 
 model = joblib.load("student_dropout_model.pkl")
 
-st.title("Student Dropout Prediction")
+st.title("Student Dropout Prediction System")
 
-st.write("Enter student academic and personal details to predict dropout risk")
+age = st.number_input("Age", min_value=0, step=1)
+gender = st.selectbox("Gender", ["Female", "Male"])
+family_income = st.number_input("Family Income", min_value=0.0, step=1000.0)
+internet_access = st.selectbox("Internet Access", ["No", "Yes"])
+study_hours = st.number_input("Study Hours per Day", min_value=0.0, step=0.5)
+attendance_rate = st.number_input("Attendance Rate (%)", min_value=0.0, max_value=100.0, step=1.0)
+assignment_delay = st.number_input("Assignment Delay Days", min_value=0, step=1)
+travel_time = st.number_input("Travel Time (Minutes)", min_value=0, step=1)
+part_time_job = st.selectbox("Part Time Job", ["No", "Yes"])
+scholarship = st.selectbox("Scholarship", ["No", "Yes"])
+stress_index = st.number_input("Stress Index", min_value=0, step=1)
+gpa = st.number_input("GPA", min_value=0.0, max_value=10.0, step=0.1)
+semester_gpa = st.number_input("Semester GPA", min_value=0.0, max_value=10.0, step=0.1)
+cgpa = st.number_input("CGPA", min_value=0.0, max_value=10.0, step=0.1)
+semester = st.number_input("Semester", min_value=1, step=1)
+department = st.number_input("Department", min_value=0, step=1)
+parental_education = st.number_input("Parental Education", min_value=0, step=1)
 
-age = st.number_input("Age", 0, 100)
-gender = st.number_input("Gender (0 = Female, 1 = Male)", 0, 1)
-family_income = st.number_input("Family Income")
-internet_access = st.number_input("Internet Access (0 = No, 1 = Yes)", 0, 1)
-study_hours = st.number_input("Study Hours per Day")
-attendance_rate = st.number_input("Attendance Rate (%)")
-assignment_delay = st.number_input("Assignment Delay Days")
-travel_time = st.number_input("Travel Time (Minutes)")
-part_time_job = st.number_input("Part Time Job (0 = No, 1 = Yes)", 0, 1)
-scholarship = st.number_input("Scholarship (0 = No, 1 = Yes)", 0, 1)
-stress_index = st.number_input("Stress Index")
-gpa = st.number_input("GPA")
-semester_gpa = st.number_input("Semester GPA")
-cgpa = st.number_input("CGPA")
-semester = st.number_input("Semester")
-department = st.number_input("Department (Encoded)")
-parental_education = st.number_input("Parental Education (Encoded)")
+gender = 1 if gender == "Male" else 0
+internet_access = 1 if internet_access == "Yes" else 0
+part_time_job = 1 if part_time_job == "Yes" else 0
+scholarship = 1 if scholarship == "Yes" else 0
 
-df = pd.DataFrame({
-    "Age":[age],
-    "Gender":[gender],
-    "Family_Income":[family_income],
-    "Internet_Access":[internet_access],
-    "Study_Hours_per_Day":[study_hours],
-    "Attendance_Rate":[attendance_rate],
-    "Assignment_Delay_Days":[assignment_delay],
-    "Travel_Time_Minutes":[travel_time],
-    "Part_Time_Job":[part_time_job],
-    "Scholarship":[scholarship],
-    "Stress_Index":[stress_index],
-    "GPA":[gpa],
-    "Semester_GPA":[semester_gpa],
-    "CGPA":[cgpa],
-    "Semester":[semester],
-    "Department":[department],
-    "Parental_Education":[parental_education]
-})
+data = np.array([[
+age,
+gender,
+family_income,
+internet_access,
+study_hours,
+attendance_rate,
+assignment_delay,
+travel_time,
+part_time_job,
+scholarship,
+stress_index,
+gpa,
+semester_gpa,
+cgpa,
+semester,
+department,
+parental_education
+]])
 
 if st.button("Predict Dropout"):
-    prediction = model.predict(df)
+    prediction = model.predict(data)
 
     if prediction[0] == 1:
         st.error("Student is likely to Dropout")
