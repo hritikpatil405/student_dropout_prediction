@@ -38,18 +38,51 @@ internet_access = 1 if internet_access == "Yes" else 0
 part_time_job = 1 if part_time_job == "Yes" else 0
 scholarship = 1 if scholarship == "Yes" else 0
 
+columns = [
+"Age",
+"Gender",
+"Family_Income",
+"Internet_Access",
+"Study_Hours_per_Day",
+"Attendance_Rate",
+"Assignment_Delay_Days",
+"Travel_Time_Minutes",
+"Part_Time_Job",
+"Scholarship",
+"Stress_Index",
+"GPA",
+"Semester_GPA",
+"CGPA",
+"Semester",
+"Department",
+"Parental_Education"
+]
+
 data = [[
-age, gender, family_income, internet_access,
-study_hours, attendance_rate, assignment_delay,
-travel_time, part_time_job, scholarship,
-stress_index, gpa, semester_gpa, cgpa,
-semester, department, parental_education
+age,
+gender,
+family_income,
+internet_access,
+study_hours,
+attendance_rate,
+assignment_delay,
+travel_time,
+part_time_job,
+scholarship,
+stress_index,
+gpa,
+semester_gpa,
+cgpa,
+semester,
+department,
+parental_education
 ]]
 
-df = pd.DataFrame(data)
+df = pd.DataFrame(data, columns=columns)
 
 if st.button("Predict Dropout"):
     prediction = model.predict(df)
+
     if prediction[0] == 1:
         st.error("Student is likely to Dropout")
     else:
